@@ -6,6 +6,7 @@ function App() {
   return (
     <div className="App">
       <div className='formContainer'>
+        <p>Note: Please keep "control" pressed when you speak. <br/> You can use command "next" and "previous" to navigate the form.</p>
         <h3>Crete a new Task</h3>
         <form className='appForm' aria-label="Please enter task details below">
           <label htmlFor="task-name">Task Name</label>
