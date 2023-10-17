@@ -18,6 +18,8 @@
   flex-direction: column;
 }
 
-.appForm input{
+.appForm input,
+.appForm select,
+.appForm textarea{
   margin-bottom: 1rem;
 }

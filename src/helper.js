@@ -20,6 +20,23 @@ function makeRecognitionSound(){
     }, 50);  
 }
 
+function updateInputValue(element, content){
+    switch(element.type){
+        case 'text':
+            element.value = content;
+            break;
+        case 'select-one':
+            const options = [...element.options].map(option => option.value)
+            const selectedOption = options.find(option => option.toLowerCase() === content.toLowerCase())
+            if(selectedOption){
+                element.value = selectedOption;
+            }
+            break;
+        default:
+            break;
+    }
+}
+
 (() => {
     const {recognition, synthesis } = initializeWebSpeech()
     let skipInput = false;
@@ -27,13 +44,14 @@ function makeRecognitionSound(){
     recognition.onresult = (event) => {
         const inputSpeech = event.results[0][0].transcript;
         console.log(inputSpeech)
-        if(inputSpeech === 'next' || inputSpeech === 'previous'){
+        if(!inputSpeech) return
+        if(inputSpeech.toLowerCase() === 'next' || inputSpeech.toLowerCase() === 'previous'){
             skipInput = true;
             const sibling = inputSpeech === 'next' ? goNext() : goPrevious();
             activeElement = sibling
             return;
         }
-        activeElement.value = inputSpeech
+        updateInputValue(activeElement, inputSpeech)
     };
     recognition.onspeechend = () => {
         recognitionEnd();
@@ -51,14 +69,11 @@ function makeRecognitionSound(){
         if(skipInput) return;
         setTimeout(() => {
             let utterThis = new SpeechSynthesisUtterance(activeElement.value);
-            if(utterThis.text === 'help'){
-                activeElement.value = ''
+            const textInLower = utterThis.text?.toLocaleLowerCase()
+            if(textInLower === 'help' || textInLower === 'clear'){
+                updateInputValue(activeElement, '')
                 const ariaValue = document.querySelector(`label[for="${activeElement.id}"]`);
-                utterThis = new SpeechSynthesisUtterance(`The label for this field is ${ariaValue.textContent}`)
-            }else if(utterThis.text === 'clear'){
-                activeElement.value = ''
-                const ariaValue = document.querySelector(`label[for="${activeElement.id}"]`);
-                utterThis = new SpeechSynthesisUtterance(`Clearing the input value for ${ariaValue.textContent}`)
+                utterThis = new SpeechSynthesisUtterance(textInLower === 'help' ? `The label for this field is ${ariaValue.textContent}` : `Clearing the content of ${ariaValue.textContent}`)
             }
             synthesis.speak(utterThis)
         },1000)

@@ -10,6 +10,12 @@ function App() {
         <form className='appForm' aria-label="Please enter task details below">
           <label htmlFor="task-name">Task Name</label>
           <input type="text" id="task-name" placeholder='Enter Task Name'/>
+          <label htmlFor='assignee-name'>Assignee Name</label>
+          <select name="assignee" id="assignee-name">
+            <option value="User 1">User 1</option>
+            <option value="User 2">User 2</option>
+            <option value="User 3">User 3</option>
+          </select>
           <label htmlFor='notes' >Notes</label>
           <textarea id="notes" type="tel" placeholder='Notes'/>
           <div className="buttonContainer">
