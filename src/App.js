@@ -18,7 +18,7 @@ function App() {
             <option value="User 3">User 3</option>
           </select>
           <label htmlFor='notes' >Notes</label>
-          <textarea id="notes" type="tel" placeholder='Notes'/>
+          <textarea id="notes" type="text" placeholder='Notes'/>
           <div className="buttonContainer">
             <button type="submit">Submit</button>
             <button type="reset">Clear</button>

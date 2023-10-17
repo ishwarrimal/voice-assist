@@ -23,6 +23,7 @@ function makeRecognitionSound(){
 function updateInputValue(element, content){
     switch(element.type){
         case 'text':
+        case 'textarea':
             element.value = content;
             break;
         case 'select-one':
@@ -43,7 +44,7 @@ function updateInputValue(element, content){
     let activeElement;
     recognition.onresult = (event) => {
         const inputSpeech = event.results[0][0].transcript;
-        console.log(inputSpeech)
+        console.log(inputSpeech, activeElement)
         if(!inputSpeech) return
         if(inputSpeech.toLowerCase() === 'next' || inputSpeech.toLowerCase() === 'previous'){
             skipInput = true;
