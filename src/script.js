@@ -32,8 +32,12 @@ function initializeVoiceAssist(setGlobalSpeech){
     function recognitionStart(){
         skipInput = false
         activeElement = document.activeElement
-        makeRecognitionSound(true)
-        recognition.start()
+        try{
+            makeRecognitionSound(true)
+            recognition.start()
+        }catch(e){
+            console.log(e)
+        }
     }
 
     function recognitionEnd(){

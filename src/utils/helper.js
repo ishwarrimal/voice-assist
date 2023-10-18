@@ -43,6 +43,13 @@ function updateInputValue(element, content){
                 element.value = selectedOption;
             }
             break;
+        case 'date':
+            const today = new Date();
+            const tomorrow = new Date(today);
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            const dueDate = content === "today" ? today.toISOString().slice(0, 10) : tomorrow.toISOString().slice(0, 10)
+            element.value = dueDate
+            break
         default:
             break;
     }
