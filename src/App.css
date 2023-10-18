@@ -2,15 +2,33 @@
   display: flex;
   flex-direction: column;
   padding: 5% 20%;
+  height: 100vh;
+  background-color: antiquewhite;
+}
+
+.addTaskButtonContainer{
+  width: fit-content;
+}
+
+.addTaskButtonContainer button {
+  background: #2ca01c;
+  color: white;
+  border: none;
+  padding: 10px;
+  font-size: 16px;
+
 }
 
 .formContainer{
+  position: absolute;
+  right: 0;
+  top: 0;
+  height: 100vh;
   display: flex;
   padding: 10px 40px;
   flex-direction: column;
   text-align: left;
-  background-color: antiquewhite;
-
+  background-color: whitesmoke;
 }
 
 .appForm{
