@@ -5,16 +5,14 @@ import { initializeVoiceAssist } from './script';
 
 function App() {
   const [showModal, setShowModal] = useState(false)
-  const [globalSpeech, setGlobalSpeech] = useState('apple')
+  const [globalSpeech, setGlobalSpeech] = useState(`Note: Please keep "control" pressed when you speak. 
+  You can use command "next" and "previous" to navigate the form.
+ Global commands like "create a task" is supported.`)
   useEffect(() => {
     initializeVoiceAssist(setGlobalSpeech)
   }, [])
    return (
     <div className="App">
-      <p>Note: Please keep "control" pressed when you speak. 
-      <br/> You can use command "next" and "previous" to navigate the form.
-      <br/>Global commands like "create a task" is supported.
-      </p>
       <h3>Crete a new Task</h3>
       <div className='addTaskButtonContainer'>
         <button id="create-task" data-global-command="create-task" onClick={() => setShowModal(!showModal)}>{!showModal ? '+ Add Task' : '- Close Task'}</button>
@@ -22,6 +20,7 @@ function App() {
       {showModal && 
         <div className='formContainer'>
           <form className='appForm' aria-label="Form to enter details for creating a new task">
+            <h3 className='heading'>Add task</h3>
             <label htmlFor="task-name">Task Name</label>
             <input type="text" id="task-name" placeholder='Enter Task Name'/>
             <label htmlFor='assignee-name'>Assignee Name</label>
