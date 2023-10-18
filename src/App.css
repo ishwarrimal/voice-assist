@@ -41,3 +41,13 @@
 .appForm textarea{
   margin-bottom: 1rem;
 }
+
+.global-speech-output{
+  width: fit-content;
+  position: absolute;
+  bottom: 40px;
+  background: white;
+  padding: 8px;
+  font-size: 16px;
+  border-radius: 6px;
+}

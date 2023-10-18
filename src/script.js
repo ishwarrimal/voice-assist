@@ -4,7 +4,7 @@ const globalCommandContext = {
     'create a task': 'create-task',
 }
 
-function initializeVoiceAssist(){
+function initializeVoiceAssist(setGlobalSpeech){
     const {recognition, synthesis } = initializeWebSpeech()
     const globalCommands = registerGlobalCommands();
     let globalCommandInput = '';
@@ -15,6 +15,7 @@ function initializeVoiceAssist(){
         if(activeElement.tagName === 'BODY'){
             console.log(inputSpeech)
             globalCommandInput = inputSpeech
+            setGlobalSpeech(globalCommandInput)
         }
         else if(inputSpeech.toLowerCase() === 'next' || inputSpeech.toLowerCase() === 'previous'){
             skipInput = true;
@@ -40,6 +41,9 @@ function initializeVoiceAssist(){
         if(skipInput) return;
         setTimeout(() => {
             if(activeElement.tagName === 'BODY'){
+                setTimeout(() => {
+                    setGlobalSpeech('')
+                }, 1000)
                 triggerGlobalCommands()
                 return;
             }
