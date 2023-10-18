@@ -1,58 +1,28 @@
-function initializeWebSpeech(){
-    let recognition = new window.webkitSpeechRecognition();
-    recognition.continuous = true;
-    recognition.lang = "en-US";
-    recognition.interimResults = true;
-    recognition.maxAlternatives = 1;
-    let synthesis = window.speechSynthesis;
-    return { recognition, synthesis }
+import { initializeWebSpeech, registerGlobalCommands, makeRecognitionSound, updateInputValue } from "./utils/helper";
+
+const globalCommandContext = {
+    'create a task': 'create-task',
 }
 
-function makeRecognitionSound(){
-    var context = new AudioContext();
-    var oscillator = context.createOscillator();
-    oscillator.type = "sine";
-    oscillator.frequency.value = 400;
-    oscillator.connect(context.destination);
-    oscillator.start(); 
-    setTimeout(function () {
-        oscillator.stop();
-    }, 50);  
-}
-
-function updateInputValue(element, content){
-    switch(element.type){
-        case 'text':
-        case 'textarea':
-            element.value = content;
-            break;
-        case 'select-one':
-            const options = [...element.options].map(option => option.value)
-            const selectedOption = options.find(option => option.toLowerCase() === content.toLowerCase())
-            if(selectedOption){
-                element.value = selectedOption;
-            }
-            break;
-        default:
-            break;
-    }
-}
-
-(() => {
+function initializeVoiceAssist(){
     const {recognition, synthesis } = initializeWebSpeech()
+    const globalCommands = registerGlobalCommands();
+    let globalCommandInput = '';
     let skipInput = false;
     let activeElement;
     recognition.onresult = (event) => {
         const inputSpeech = event.results[0][0].transcript;
-        console.log(inputSpeech, activeElement)
-        if(!inputSpeech) return
-        if(inputSpeech.toLowerCase() === 'next' || inputSpeech.toLowerCase() === 'previous'){
+        if(activeElement.tagName === 'BODY'){
+            console.log(inputSpeech)
+            globalCommandInput = inputSpeech
+        }
+        else if(inputSpeech.toLowerCase() === 'next' || inputSpeech.toLowerCase() === 'previous'){
             skipInput = true;
             const sibling = inputSpeech === 'next' ? goNext() : goPrevious();
             activeElement = sibling
-            return;
+        }else{
+            updateInputValue(activeElement, inputSpeech)
         }
-        updateInputValue(activeElement, inputSpeech)
     };
     recognition.onspeechend = () => {
         recognitionEnd();
@@ -69,6 +39,10 @@ function updateInputValue(element, content){
         recognition.stop();
         if(skipInput) return;
         setTimeout(() => {
+            if(activeElement.tagName === 'BODY'){
+                triggerGlobalCommands()
+                return;
+            }
             let utterThis = new SpeechSynthesisUtterance(activeElement.value);
             const textInLower = utterThis.text?.toLocaleLowerCase()
             if(textInLower === 'help' || textInLower === 'clear'){
@@ -92,6 +66,14 @@ function updateInputValue(element, content){
         return previousSib
     }
 
+    function triggerGlobalCommands(){
+        const command = Object.keys(globalCommandContext).find(cmd => cmd.toLowerCase() === globalCommandInput.toLowerCase())
+        console.log(globalCommands, globalCommandContext[command])
+        if(command && globalCommandContext[command]){
+            globalCommands[globalCommandContext[command]].click()
+        }
+    }
+
     document.addEventListener('keydown', (e) => {
         if(e.ctrlKey){
             recognitionStart()
@@ -101,6 +83,7 @@ function updateInputValue(element, content){
         recognition.stop()
     })
 
-})()
+}
 
+export { initializeVoiceAssist }
 
