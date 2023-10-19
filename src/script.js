@@ -8,21 +8,26 @@ function initializeVoiceAssist(setGlobalSpeech){
     const {recognition, synthesis } = initializeWebSpeech()
     const globalCommands = registerGlobalCommands();
     let globalCommandInput = '';
+    let localCommandInput = ''
     let skipInput = false;
     let activeElement;
     recognition.onresult = (event) => {
-        const inputSpeech = event.results[0][0].transcript;
+        localCommandInput = event.results[0][0].transcript;
+        let lowerInputSpeech = localCommandInput.toLowerCase()
         if(activeElement.tagName === 'BODY'){
-            console.log(inputSpeech)
-            globalCommandInput = inputSpeech
+            console.log(localCommandInput)
+            globalCommandInput = localCommandInput
             setGlobalSpeech(globalCommandInput)
         }
-        else if(inputSpeech.toLowerCase() === 'next' || inputSpeech.toLowerCase() === 'previous'){
+        else if(lowerInputSpeech === 'help' || lowerInputSpeech === 'clear'){
+            return;
+        }
+        else if(lowerInputSpeech === 'next' || lowerInputSpeech === 'previous'){
             skipInput = true;
-            const sibling = inputSpeech === 'next' ? goNext() : goPrevious();
+            const sibling = localCommandInput === 'next' ? goNext() : goPrevious();
             activeElement = sibling
         }else{
-            updateInputValue(activeElement, inputSpeech)
+            updateInputValue(activeElement, localCommandInput)
         }
     };
     recognition.onspeechend = () => {
@@ -51,12 +56,12 @@ function initializeVoiceAssist(setGlobalSpeech){
                 triggerGlobalCommands()
                 return;
             }
-            let utterThis = new SpeechSynthesisUtterance(activeElement.value);
+            let utterThis = new SpeechSynthesisUtterance(localCommandInput);
             const textInLower = utterThis.text?.toLocaleLowerCase()
             if(textInLower === 'help' || textInLower === 'clear'){
                 updateInputValue(activeElement, '')
-                const ariaValue = document.querySelector(`label[for="${activeElement.id}"]`);
-                utterThis = new SpeechSynthesisUtterance(textInLower === 'help' ? `The label for this field is ${ariaValue.textContent}` : `Clearing the content of ${ariaValue.textContent}`)
+                const ariaValue = activeElement.getAttribute('aria-label') || document.querySelector(`label[for="${activeElement.id}"]`);
+                utterThis = new SpeechSynthesisUtterance(textInLower === 'help' ? `Enter ${ariaValue.textContent}` : `Clearing the content of ${ariaValue.textContent}`)
             }
             synthesis.speak(utterThis)
         },1000)
@@ -76,10 +81,10 @@ function initializeVoiceAssist(setGlobalSpeech){
 
     function triggerGlobalCommands(){
         const command = Object.keys(globalCommandContext).find(cmd => cmd.toLowerCase() === globalCommandInput.toLowerCase())
-        console.log(globalCommands, globalCommandContext[command])
         if(command && globalCommandContext[command]){
             globalCommands[globalCommandContext[command]].click()
         }
+        globalCommandInput = ''
     }
 
     document.addEventListener('keydown', (e) => {

@@ -47,6 +47,7 @@ function updateInputValue(element, content){
             const today = new Date();
             const tomorrow = new Date(today);
             tomorrow.setDate(tomorrow.getDate() + 1);
+            if(content !== "today" && content !== "tomorrow") return;
             const dueDate = content === "today" ? today.toISOString().slice(0, 10) : tomorrow.toISOString().slice(0, 10)
             element.value = dueDate
             break

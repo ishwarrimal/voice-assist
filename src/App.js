@@ -36,7 +36,7 @@ function App() {
             <h3 className='heading'>Add task</h3>
             <label htmlFor="task-name">Task Name</label>
             <input type="text" id="task-name" autoFocus placeholder='Enter Task Name'/>
-            <label htmlFor='assignee-name'>Assignee Name</label>
+            <label htmlFor='assignee-name' aria-label='Enter assignee name'>Assignee Name</label>
             <select name="assignee" id="assignee-name">
               <option value="User 1">User 1</option>
               <option value="User 2">User 2</option>
