@@ -4,6 +4,30 @@ import './script'
 import { initializeVoiceAssist } from './script';
 import { INTRO_MSG } from './constants';
 
+function MyFrom({formSubmit, dataGlobalDescriptionId}){
+  return <div className='formContainer' data-global-description-id={dataGlobalDescriptionId} data-global-description="This form is used to create a task">
+  <form className='appForm' aria-label="Form to enter details for creating a new task" onSubmit={formSubmit}>
+    <h3 className='heading'>Add task</h3>
+    <label htmlFor="task-name">Task Name</label>
+    <input type="text" id="task-name" autoFocus placeholder='Enter Task Name'/>
+    <label htmlFor='assignee-name' aria-label='Enter assignee name'>Assignee Name</label>
+    <select name="assignee" id="assignee-name">
+      <option value="User 1">User 1</option>
+      <option value="User 2">User 2</option>
+      <option value="User 3">User 3</option>
+    </select>
+    <label htmlFor='due-date'>Due Date</label>
+    <input type="date" id="due-date"/>
+    <label htmlFor='notes' >Notes</label>
+    <textarea id="notes" type="text" placeholder='Notes'/>
+    <div className="buttonContainer">
+      <button type="submit">Submit</button>
+      <button type="reset">Clear</button>
+    </div>
+  </form>
+</div>
+}
+
 function App() {
   const [showModal, setShowModal] = useState(false)
   const [globalSpeech, setGlobalSpeech] = useState(INTRO_MSG)
@@ -31,27 +55,7 @@ function App() {
         <button id="create-task" data-global-command="create-task" onClick={() => setShowModal(!showModal)}>{!showModal ? '+ Add Task' : '- Close Task'}</button>
       </div>
       {showModal && 
-        <div className='formContainer'>
-          <form className='appForm' aria-label="Form to enter details for creating a new task" onSubmit={formSubmit}>
-            <h3 className='heading'>Add task</h3>
-            <label htmlFor="task-name">Task Name</label>
-            <input type="text" id="task-name" autoFocus placeholder='Enter Task Name'/>
-            <label htmlFor='assignee-name' aria-label='Enter assignee name'>Assignee Name</label>
-            <select name="assignee" id="assignee-name">
-              <option value="User 1">User 1</option>
-              <option value="User 2">User 2</option>
-              <option value="User 3">User 3</option>
-            </select>
-            <label htmlFor='due-date'>Due Date</label>
-            <input type="date" id="due-date"/>
-            <label htmlFor='notes' >Notes</label>
-            <textarea id="notes" type="text" placeholder='Notes'/>
-            <div className="buttonContainer">
-              <button type="submit">Submit</button>
-              <button type="reset">Clear</button>
-            </div>
-          </form>
-        </div>
+        <MyFrom formSubmit={formSubmit} dataGlobalDescriptionId="task-form"/>
       }
       {globalSpeech.length > 0 && 
       <div className='global-speech-output'>

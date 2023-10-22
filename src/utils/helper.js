@@ -30,18 +30,37 @@ function makeRecognitionSound(){
     }, 50);  
 }
 
+function getInputType(type){
+    return type === "textarea" ? window.HTMLTextAreaElement : window.HTMLInputElement
+}
+
 function updateInputValue(element, content){
+    const fieldType = element.dataset.sonicType || element.type;
+
+    function handleInputUpdate(value){
+        const inputType = getInputType(fieldType)
+        var nativeInputValueSetter = Object.getOwnPropertyDescriptor(inputType.prototype, "value").set;
+        nativeInputValueSetter.call(element, value);
+        var ev2 = new Event('input', { bubbles: true});
+        element.dispatchEvent(ev2);
+    }
+    
     switch(element.type){
         case 'text':
         case 'textarea':
-            element.value = content;
+            handleInputUpdate(content)
+            break;
+        case 'number':
+            let inputContent = !isNaN(content) && Number(content)
+            inputContent && handleInputUpdate(inputContent)
             break;
         case 'select-one':
-            const options = [...element.options].map(option => option.value)
-            const selectedOption = options.find(option => option.toLowerCase() === content.toLowerCase())
-            if(selectedOption){
-                element.value = selectedOption;
-            }
+            //no need to handle select
+            // const options = [...element.options].map(option => option.value)
+            // const selectedOption = options.find(option => option.toLowerCase() === content.toLowerCase())
+            // if(selectedOption){
+            //     element.value = selectedOption;
+            // }
             break;
         case 'date':
             const today = new Date();
@@ -49,7 +68,7 @@ function updateInputValue(element, content){
             tomorrow.setDate(tomorrow.getDate() + 1);
             if(content !== "today" && content !== "tomorrow") return;
             const dueDate = content === "today" ? today.toISOString().slice(0, 10) : tomorrow.toISOString().slice(0, 10)
-            element.value = dueDate
+            handleInputUpdate(dueDate)
             break
         default:
             break;
